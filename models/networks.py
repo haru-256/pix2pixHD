@@ -6,6 +6,7 @@ import functools
 from torch.autograd import Variable
 import numpy as np
 
+
 ###############################################################################
 # Functions
 ###############################################################################
@@ -16,6 +17,7 @@ def weights_init(m):
     elif classname.find('BatchNorm2d') != -1:
         m.weight.data.normal_(1.0, 0.02)
         m.bias.data.fill_(0)
+
 
 def get_norm_layer(norm_type='instance'):
     if norm_type == 'batch':
