@@ -166,6 +166,7 @@ class LocalEnhancer(nn.Module):
             setattr(self, 'model'+str(n)+'_1', nn.Sequential(*model_downsample))
             setattr(self, 'model'+str(n)+'_2', nn.Sequential(*model_upsample))                  
         
+        # count_include_pad=Falseでaverage を計算する際に0 padしたところを計算に含めないようにする．
         self.downsample = nn.AvgPool2d(3, stride=2, padding=[1, 1], count_include_pad=False)
 
     def forward(self, input): 
