@@ -7,6 +7,7 @@ from torch.autograd import Variable
 from util.image_pool import ImagePool
 from .base_model import BaseModel
 from . import networks
+import matplotlib.pyplot as plt
 
 
 class Pix2PixHDModel(BaseModel):
@@ -174,9 +175,17 @@ class Pix2PixHDModel(BaseModel):
 
         # get edges from instance map
         if not self.opt.no_instance:
+            # fig, ax = plt.subplots(1, 2, figsize=(24, 12))
             inst_map = inst_map.data.cuda()
+            # print(np.unique(inst_map.cpu().squeeze().numpy()))
+            # print(inst_map.cpu().squeeze().numpy().shape)
+            # ax[0].imshow(inst_map.cpu().squeeze().numpy())
             edge_map = self.get_edges(inst_map)
-            print("Input Edge Map shape", edge_map.shape)
+            # print("Input Edge Map shape", edge_map.shape)
+            # print(edge_map.cpu().squeeze().numpy().shape)
+            # ax[1].imshow(edge_map.cpu().squeeze().numpy())
+            # fig.show()
+
             input_label = torch.cat((input_label, edge_map), dim=1)
         input_label = Variable(input_label, volatile=infer)
 
@@ -191,7 +200,9 @@ class Pix2PixHDModel(BaseModel):
                 feat_map = Variable(feat_map.data.cuda())
             if self.opt.label_feat:
                 inst_map = label_map.cuda()
-                print("Input Instance Map shape", inst_map.shape)
+            print("Input Instance Map shape", inst_map.shape)
+
+        input("pause")
 
         return input_label, inst_map, real_image, feat_map
 
@@ -204,6 +215,11 @@ class Pix2PixHDModel(BaseModel):
             return self.netD.forward(input_concat)
 
     def forward(self, label, inst, image, feat, infer=False):
+        print("Forward function", end="\n" + "=" * 50 + "\n")
+        print("label shape", label.shape)
+        print("inst shape", inst.shape)
+        print("image shape", image.shape)
+        print("=" * 50)
         # Encode Inputs
         input_label, inst_map, real_image, feat_map = self.encode_input(
             label, inst, image, feat
@@ -313,6 +329,7 @@ class Pix2PixHDModel(BaseModel):
         return feat_map
 
     def encode_features(self, image, inst):
+        print("use encode_features!!!!!!!!!!!!!!!")
         image = Variable(image.cuda(), volatile=True)
         feat_num = self.opt.feat_num
         h, w = inst.size()[2], inst.size()[3]
