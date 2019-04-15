@@ -630,6 +630,7 @@ class Vgg19(torch.nn.Module):
         if not requires_grad:
             for param in self.parameters():
                 param.requires_grad = False
+        print(self)
 
     def forward(self, X):
         h_relu1 = self.slice1(X)

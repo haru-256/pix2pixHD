@@ -6,6 +6,7 @@ from data.image_folder import make_dataset
 from PIL import Image
 import matplotlib.pyplot as plt
 import numpy as np
+import torch
 
 
 class AlignedDataset(BaseDataset):
@@ -49,7 +50,11 @@ class AlignedDataset(BaseDataset):
             transform_A = get_transform(
                 self.opt, params, method=Image.NEAREST, normalize=False
             )
+            # transforms.ToTenosrは[0, 255]の値を[0, 1]にrescaleするた，255をかける
             A_tensor = transform_A(A) * 255.0
+            print("label_map====================")
+            print(A_tensor.shape)
+            print(torch.unique(A_tensor))
 
         B_tensor = inst_tensor = feat_tensor = 0
         ### input B (real images)
@@ -58,6 +63,9 @@ class AlignedDataset(BaseDataset):
             B = Image.open(B_path).convert("RGB")
             transform_B = get_transform(self.opt, params)
             B_tensor = transform_B(B)
+            print("real_map=======================")
+            print(B_tensor.shape)
+            print(torch.unique(B_tensor))
 
         ### if using instance maps
         if not self.opt.no_instance:
@@ -71,6 +79,9 @@ class AlignedDataset(BaseDataset):
                 feat = Image.open(feat_path).convert("RGB")
                 norm = normalize()
                 feat_tensor = norm(transform_A(feat))
+            print("inst_map=======================")
+            print(inst_tensor.shape)
+            print(torch.unique(inst_tensor))
 
         input_dict = {
             "label": A_tensor,
