@@ -73,6 +73,7 @@ class AlignedDataset(BaseDataset):
             inst = Image.open(inst_path)
 
             inst_tensor = transform_A(inst)
+            print("inst_tensor:", torch.unique(inst_tenosr))
 
             if self.opt.load_features:
                 feat_path = self.feat_paths[index]
